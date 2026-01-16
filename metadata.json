@@ -1,0 +1,8 @@
+{
+  "name": "KulinaPOS Enterprise",
+  "description": "The high-octane, red-tier Point of Sale system for elite restaurants and cafes. Empowered by KulinaAI for peak operational velocity.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
