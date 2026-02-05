@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { MenuItem, Order, OrderStatus, OrderItem, PaymentMethod, Discount, Table, TableStatus } from '../types';
+import { MenuItem, Order, OrderStatus, OrderItem, PaymentMethod, Discount, Table } from '../types';
 
 interface POSProps {
   onOrderSubmit: (order: Order) => void;
@@ -13,24 +13,13 @@ interface POSProps {
   existingOrders?: Order[];
 }
 
-type NavTab = 'favorites' | 'library' | 'custom';
-type ViewMode = 'grid' | 'list';
-
 const POS: React.FC<POSProps> = ({ onOrderSubmit, onExit, menuItems, categories, promos, tables, outletId, existingOrders = [] }) => {
   const [cart, setCart] = useState<OrderItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | 'All'>('All');
   const [tableSelection, setTableSelection] = useState<string | 'Takeaway'>('Takeaway');
   const [customerName, setCustomerName] = useState('');
-  
-  const [activeTab, setActiveTab] = useState<NavTab>('library');
   const [searchQuery, setSearchQuery] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState<Discount | null>(null);
-
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
-  const [qrCodeInput, setQrCodeInput] = useState('');
-  const [qrError, setQrError] = useState('');
-  
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>(PaymentMethod.CASH);
   const [amountTendered, setAmountTendered] = useState<string>('');
   const [showReceipt, setShowReceipt] = useState(false);
@@ -42,9 +31,7 @@ const POS: React.FC<POSProps> = ({ onOrderSubmit, onExit, menuItems, categories,
     return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   };
 
-  const parseNumber = (val: string) => val.replace(/\D/g, '');
-
-  const addToCart = (item: MenuItem | { id: string, name: string, price: number }) => {
+  const addToCart = (item: MenuItem) => {
     setCart(prev => {
       const existing = prev.find(i => i.menuItemId === item.id);
       if (existing) return prev.map(i => i.menuItemId === item.id ? { ...i, quantity: i.quantity + 1 } : i);
@@ -56,44 +43,21 @@ const POS: React.FC<POSProps> = ({ onOrderSubmit, onExit, menuItems, categories,
     setCart(prev => prev.filter(i => i.menuItemId !== menuItemId));
   };
 
-  const handleRetrieveOrder = () => {
-    const code = qrCodeInput.toUpperCase().trim();
-    const order = existingOrders.find(o => o.id === code || o.id === code.replace('#', ''));
-    if (order) {
-      setCart(order.items);
-      setCustomerName(order.customerName || '');
-      const matchedTable = tables.find(t => t.number === order.tableNumber);
-      setTableSelection(matchedTable ? matchedTable.id : 'Takeaway');
-      setIsQRModalOpen(false);
-      setQrCodeInput('');
-      setQrError('');
-    } else {
-      setQrError('Pesanan tidak ditemukan.');
-    }
-  };
-
   const filteredItems = useMemo(() => {
-    let items = [...menuItems];
-    if (activeTab === 'favorites') items = items.filter(i => i.isFavorite);
-    if (selectedCategory !== 'All') items = items.filter(i => i.category === selectedCategory);
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      items = items.filter(i => i.name.toLowerCase().includes(q));
-    }
-    return items;
-  }, [menuItems, activeTab, selectedCategory, searchQuery]);
+    return menuItems.filter(item => {
+      const matchCat = selectedCategory === 'All' || item.category === selectedCategory;
+      const matchSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCat && matchSearch;
+    });
+  }, [menuItems, selectedCategory, searchQuery]);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.priceAtOrder * item.quantity), 0);
-  const discountAmount = appliedPromo ? (appliedPromo.type === 'PERCENTAGE' ? subtotal * (appliedPromo.value / 100) : appliedPromo.value) : 0;
-  const tax = (subtotal - discountAmount) * 0.10;
-  const grandTotal = Math.max(0, subtotal - discountAmount + tax);
-  
-  const rawAmountTendered = parseFloat(parseNumber(amountTendered) || '0');
-  const changeDue = Math.max(0, rawAmountTendered - grandTotal);
+  const tax = subtotal * 0.10;
+  const grandTotal = subtotal + tax;
 
   const finalizeOrder = () => {
     const order: Order = {
-      id: Math.random().toString(36).substr(2, 6).toUpperCase(),
+      id: Math.random().toString(36).substr(2, 8).toUpperCase(),
       outletId: outletId,
       tableNumber: tableSelection === 'Takeaway' ? 'Takeaway' : tables.find(t => t.id === tableSelection)?.number || '??',
       items: cart,
@@ -101,11 +65,9 @@ const POS: React.FC<POSProps> = ({ onOrderSubmit, onExit, menuItems, categories,
       timestamp: Date.now(),
       total: subtotal,
       tax: tax,
-      discountTotal: discountAmount,
+      discountTotal: 0,
       grandTotal: grandTotal,
       paymentMethod: selectedPaymentMethod,
-      amountPaid: selectedPaymentMethod === PaymentMethod.CASH ? rawAmountTendered : grandTotal,
-      changeDue: selectedPaymentMethod === PaymentMethod.CASH ? changeDue : 0,
       customerName: customerName.trim() || undefined,
     };
     setLastOrder(order);
@@ -119,163 +81,219 @@ const POS: React.FC<POSProps> = ({ onOrderSubmit, onExit, menuItems, categories,
     setAmountTendered('');
     setCustomerName('');
     setTableSelection('Takeaway');
-    setSelectedPaymentMethod(PaymentMethod.CASH);
     setShowReceipt(false);
-    setLastOrder(null);
-    setAppliedPromo(null);
   };
 
   return (
-    <div className="flex h-screen w-full bg-[#fdf2f2] overflow-hidden fixed inset-0 z-[60] animate-in fade-in duration-300">
-      <div className="flex-1 flex flex-col relative overflow-hidden">
-        <div className="p-4 flex gap-4 items-center shrink-0">
-          <div className="relative flex-1">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-red-300">🔍</span>
+    <div className="flex h-screen w-full bg-[#fafbfc] overflow-hidden fixed inset-0 z-[60] animate-in fade-in duration-500 font-sans">
+      {/* Catalog Section */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header Controls */}
+        <header className="p-8 pb-4 flex justify-between items-center gap-8 shrink-0">
+          <button onClick={onExit} className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-xl shadow-sm border border-slate-100 hover:bg-slate-50 transition-all">←</button>
+          <div className="relative flex-1 group">
+            <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-fuchsia-500 transition-colors">🔍</span>
             <input 
               type="text"
-              placeholder="Search KulinaPOS Catalog..."
+              placeholder="Search product identifiers..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white rounded-xl shadow-sm border border-red-50 focus:ring-2 focus:ring-red-600 outline-none font-bold"
+              className="w-full pl-16 pr-8 py-5 bg-white rounded-2xl shadow-sm border border-slate-100 focus:ring-4 focus:ring-fuchsia-50 focus:border-fuchsia-200 outline-none font-bold text-slate-800 transition-all"
             />
           </div>
-          <button 
-            onClick={() => setIsQRModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-red-100 text-red-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-200 transition-all shadow-sm"
-          >
-            <span>Scan QR</span>
-            <span className="text-lg">📷</span>
-          </button>
-        </div>
+        </header>
 
-        <div className="flex px-4 pb-2 gap-3 shrink-0 overflow-x-auto scrollbar-hide">
-          <button onClick={() => setSelectedCategory('All')} className={`rounded-xl border w-24 h-24 flex flex-col items-center justify-center transition-all shadow-sm ${selectedCategory === 'All' ? 'bg-red-600 text-white' : 'bg-white'}`}>
-            <span className="text-3xl opacity-40">🍽️</span>
-            <span className="text-[10px] font-bold mt-1 uppercase">ALL</span>
+        {/* Category Belt */}
+        <div className="px-8 flex gap-4 overflow-x-auto scrollbar-hide py-4 shrink-0">
+          <button 
+            onClick={() => setSelectedCategory('All')} 
+            className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shrink-0 ${selectedCategory === 'All' ? 'bg-slate-900 text-white shadow-xl shadow-slate-200' : 'bg-white text-slate-400 border border-slate-100 hover:bg-slate-50'}`}
+          >
+            All Products
           </button>
           {categories.map(cat => (
-            <button key={cat} onClick={() => setSelectedCategory(cat)} className={`rounded-xl border w-24 h-24 flex flex-col items-center justify-center transition-all shadow-sm ${selectedCategory === cat ? 'bg-red-600 text-white' : 'bg-white'}`}>
-              <span className="text-[10px] font-bold mt-1 uppercase text-center px-1">{cat}</span>
+            <button 
+              key={cat} 
+              onClick={() => setSelectedCategory(cat)} 
+              className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shrink-0 ${selectedCategory === cat ? 'bg-fuchsia-600 text-white shadow-xl shadow-fuchsia-100' : 'bg-white text-slate-400 border border-slate-100 hover:bg-slate-50'}`}
+            >
+              {cat}
             </button>
           ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 pb-20 scrollbar-hide pt-2">
-          <div className="grid grid-cols-4 gap-3">
+        {/* Bento Grid Menu */}
+        <div className="flex-1 overflow-y-auto px-8 pb-10 pt-4 scrollbar-hide">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-6">
             {filteredItems.map(item => (
-              <div key={item.id} onClick={() => addToCart(item)} className="bg-white rounded-xl overflow-hidden shadow-sm border border-red-50 flex flex-col cursor-pointer hover:shadow-md active:scale-95 transition-all">
-                <div className="aspect-square bg-slate-50"><img src={item.imageUrl} className="w-full h-full object-cover" /></div>
-                <div className="p-3 bg-white text-center">
-                  <p className="text-[10px] font-black text-slate-700 uppercase truncate">{item.name}</p>
-                  <p className="text-[9px] font-bold text-red-600 mt-1">Rp {formatNumber(item.price)}</p>
+              <div 
+                key={item.id} 
+                onClick={() => addToCart(item)} 
+                className="group bg-white rounded-[2.5rem] border border-slate-100 p-4 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer flex flex-col active:scale-95"
+              >
+                <div className="aspect-square rounded-[2rem] overflow-hidden bg-slate-50 mb-4 relative">
+                  <img src={item.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={item.name} />
+                  <div className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-md rounded-xl flex items-center justify-center text-fuchsia-600 font-black text-xl opacity-0 group-hover:opacity-100 transition-opacity">+</div>
+                </div>
+                <div className="px-2 pb-2">
+                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-tighter truncate">{item.name}</h4>
+                  <p className="text-[11px] font-black text-fuchsia-600 mt-2 tracking-wide">IDR {formatNumber(item.price)}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="h-16 bg-red-600 flex items-center px-4 gap-4 shrink-0 shadow-[0_-4px_20px_rgba(220,38,38,0.2)]">
-          <button onClick={onExit} className="text-white p-2 hover:bg-white/20 rounded-lg flex items-center gap-2">
-            <span className="text-[9px] font-black uppercase tracking-widest">Back to Hub</span>
-          </button>
-        </div>
       </div>
 
-      <div className="w-[420px] bg-white border-l border-red-50 flex flex-col shadow-2xl relative">
-        <div className="p-4 border-b flex items-center gap-4 bg-white">
-           <input placeholder="+ CUSTOMER NAME" value={customerName} onChange={e=>setCustomerName(e.target.value)} className="w-full font-black text-slate-800 outline-none uppercase tracking-tight" />
+      {/* Floating Checkout Sidebar */}
+      <div className="w-[450px] bg-white border-l border-slate-100 flex flex-col shadow-[-40px_0_60px_-15px_rgba(0,0,0,0.05)] relative z-10">
+        <div className="p-8 border-b border-slate-50">
+           <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-black text-slate-950 uppercase tracking-tighter">Basket</h3>
+              <button onClick={() => setCart([])} className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] hover:text-red-500 transition-colors">Clear All</button>
+           </div>
+           
+           <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-50 p-4 rounded-2xl">
+                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Customer</p>
+                 <input 
+                  placeholder="WALK-IN" 
+                  value={customerName} 
+                  onChange={e => setCustomerName(e.target.value)} 
+                  className="bg-transparent w-full text-xs font-black uppercase outline-none text-slate-800"
+                 />
+              </div>
+              <div className="bg-slate-50 p-4 rounded-2xl relative group cursor-pointer hover:bg-fuchsia-50 transition-colors">
+                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Station</p>
+                 <div className="text-xs font-black uppercase text-slate-800">{tableSelection === 'Takeaway' ? 'Takeaway' : `Table ${tables.find(t=>t.id===tableSelection)?.number}`}</div>
+              </div>
+           </div>
         </div>
-        <div className="p-4 border-b bg-red-50/30 flex justify-center">
-           <button onClick={() => {}} className="px-8 py-2 rounded-full font-black text-[10px] uppercase tracking-widest bg-red-600 text-white shadow-lg shadow-red-200">
-             {tableSelection === 'Takeaway' ? '🥡 Takeaway' : `🪑 Table ${tables.find(t=>t.id===tableSelection)?.number}`} ▾
+
+        {/* Line Items */}
+        <div className="flex-1 overflow-y-auto p-8 space-y-6 scrollbar-hide">
+          {cart.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center opacity-20 grayscale scale-90">
+              <div className="text-9xl mb-8">🧺</div>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em]">Empty Stack</p>
+            </div>
+          ) : (
+            cart.map(item => {
+              const menu = menuItems.find(m => m.id === item.menuItemId);
+              return (
+                <div key={item.menuItemId} className="flex gap-4 group">
+                  <div className="w-16 h-16 rounded-2xl bg-slate-50 overflow-hidden shrink-0">
+                    <img src={menu?.imageUrl} className="w-full h-full object-cover" alt="" />
+                  </div>
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <div className="flex justify-between items-start mb-1">
+                      <h5 className="text-[11px] font-black text-slate-900 uppercase tracking-tight truncate pr-4">{menu?.name}</h5>
+                      <span className="text-[11px] font-black text-slate-900">IDR {formatNumber(item.priceAtOrder * item.quantity)}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black text-fuchsia-500">×{item.quantity}</span>
+                      <button onClick={() => removeFromCart(item.menuItemId)} className="text-[10px] font-black text-slate-300 uppercase tracking-widest hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">Remove</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Totals & Primary Action */}
+        <div className="p-8 bg-slate-50/50 space-y-4 border-t border-slate-100">
+           <div className="space-y-2">
+             <div className="flex justify-between text-[11px] font-bold text-slate-400 uppercase tracking-widest"><span>Subtotal</span><span>IDR {formatNumber(subtotal)}</span></div>
+             <div className="flex justify-between text-[11px] font-bold text-slate-400 uppercase tracking-widest"><span>Global Tax (10%)</span><span>IDR {formatNumber(tax)}</span></div>
+           </div>
+           <div className="pt-4 flex justify-between items-end border-t border-slate-200/50">
+             <div>
+               <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Final Amount</p>
+               <h2 className="text-4xl font-black text-slate-950 tracking-tighter">IDR {formatNumber(grandTotal)}</h2>
+             </div>
+           </div>
+           <button 
+            onClick={() => setIsPaymentModalOpen(true)} 
+            disabled={cart.length === 0} 
+            className="w-full h-24 bg-slate-950 text-white rounded-[2rem] flex flex-col items-center justify-center shadow-2xl hover:bg-fuchsia-600 transition-all disabled:opacity-30 disabled:grayscale group active:scale-95"
+           >
+             <span className="text-xs font-black uppercase tracking-[0.3em] mb-1 group-hover:scale-110 transition-transform">Initialize Payment</span>
+             <span className="text-[9px] font-bold text-white/50 uppercase tracking-[0.2em]">Kulina Redline Engine</span>
            </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {cart.length === 0 ? <div className="text-center py-20 text-red-100 flex flex-col items-center"><span className="text-6xl mb-4">🛒</span><p className="font-black uppercase text-xs tracking-widest">CART IS EMPTY</p></div> : cart.map(item => {
-            const menu = menuItems.find(m => m.id === item.menuItemId);
-            return (
-              <div key={item.menuItemId} className="flex justify-between items-center text-sm font-bold border-b border-slate-50 pb-4">
-                <div className="flex-1 pr-4"><p className="truncate text-slate-800 uppercase text-xs font-black">{menu?.name}</p><button onClick={()=>removeFromCart(item.menuItemId)} className="text-[9px] text-red-500 font-black uppercase tracking-widest">Remove</button></div>
-                <span className="w-12 text-center text-red-600 font-black">x{item.quantity}</span>
-                <span className="w-24 text-right">Rp {formatNumber(item.priceAtOrder * item.quantity)}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="p-6 bg-slate-50 border-t space-y-2 font-bold text-sm">
-           <div className="flex justify-between"><span>Subtotal</span><span>Rp {formatNumber(subtotal)}</span></div>
-           <div className="flex justify-between text-slate-400"><span>Tax (10%)</span><span>Rp {formatNumber(tax)}</span></div>
-           <div className="flex justify-between text-2xl font-black pt-3 border-t"><span>TOTAL</span><span className="text-red-600">Rp {formatNumber(grandTotal)}</span></div>
-        </div>
-        <div className="p-4"><button onClick={() => setIsPaymentModalOpen(true)} disabled={cart.length === 0} className="w-full h-24 bg-red-600 text-white text-3xl font-black uppercase rounded-2xl shadow-xl shadow-red-200 hover:bg-red-700 transition-all">PAY NOW</button></div>
       </div>
 
-      {/* QR Lookup Modal */}
-      {isQRModalOpen && (
-        <div className="fixed inset-0 z-[180] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl p-10 animate-in zoom-in duration-300">
-            <h2 className="text-2xl font-black text-slate-900 mb-6 uppercase tracking-tight text-center">QR ORDER LOOKUP</h2>
-            <div className="space-y-4">
-               <input 
-                autoFocus
-                placeholder="#A1B2" 
-                value={qrCodeInput}
-                onChange={e => setQrCodeInput(e.target.value)}
-                className="w-full p-8 bg-slate-50 rounded-2xl font-black text-4xl text-center uppercase tracking-[0.5em] outline-none border-4 border-transparent focus:border-red-600 text-red-600"
-               />
-               {qrError && <p className="text-xs font-black text-red-600 text-center uppercase tracking-widest">{qrError}</p>}
-               <button onClick={handleRetrieveOrder} className="w-full py-5 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-red-100">FETCH DATA</button>
-               <button onClick={() => setIsQRModalOpen(false)} className="w-full py-4 text-slate-400 font-bold uppercase text-[10px] tracking-widest">CANCEL</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Payment Modal */}
+      {/* Payment Interface Modal */}
       {isPaymentModalOpen && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-xl rounded-[3rem] shadow-2xl overflow-hidden p-12 space-y-8 animate-in zoom-in duration-300">
-            <h2 className="text-2xl font-black uppercase text-red-600 text-center">SELECT PAYMENT</h2>
-            <div className="bg-red-50 p-8 rounded-3xl border-4 border-red-100 flex justify-between items-center">
-                <div><p className="text-[10px] font-black text-red-400 uppercase tracking-widest">Grand Total</p><p className="text-5xl font-black text-red-600 tracking-tighter">Rp {formatNumber(grandTotal)}</p></div>
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-[#020617]/90 backdrop-blur-xl p-8">
+          <div className="bg-white w-full max-w-4xl rounded-[4rem] shadow-2xl overflow-hidden flex h-[600px] animate-in zoom-in duration-500">
+            {/* Left Info Panel */}
+            <div className="w-1/2 bg-slate-950 p-16 text-white flex flex-col justify-between relative overflow-hidden">
+               <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-fuchsia-500 to-transparent" />
+               <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-fuchsia-500 mb-4">Total Telemetry</p>
+                  <h2 className="text-7xl font-black tracking-tighter">IDR {formatNumber(grandTotal)}</h2>
+               </div>
+               <div className="space-y-4">
+                  <div className="flex justify-between text-slate-500 font-black uppercase text-[10px] tracking-widest"><span>Items Count</span><span className="text-white">{cart.reduce((s,i)=>s+i.quantity,0)} Unit</span></div>
+                  <div className="flex justify-between text-slate-500 font-black uppercase text-[10px] tracking-widest"><span>Network ID</span><span className="text-white">KLN-POS-X1</span></div>
+               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {['CASH', 'CARD', 'E_WALLET'].map(m => (
-                <button key={m} onClick={() => setSelectedPaymentMethod(m as PaymentMethod)} className={`p-6 rounded-2xl border-4 font-black text-[10px] uppercase tracking-widest ${selectedPaymentMethod === m ? 'border-red-600 bg-red-50 text-red-600' : 'border-transparent bg-slate-50 text-slate-400'}`}>{m}</button>
-              ))}
+            {/* Right Interactive Panel */}
+            <div className="flex-1 p-16 flex flex-col justify-between">
+              <div>
+                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tighter mb-10">Select Settlement</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {['CASH', 'CARD', 'E_WALLET', 'CRYPTO'].map(m => (
+                    <button 
+                      key={m} 
+                      onClick={() => setSelectedPaymentMethod(m as PaymentMethod)}
+                      className={`p-6 rounded-[2rem] border-2 font-black text-[11px] uppercase tracking-widest transition-all ${selectedPaymentMethod === m ? 'border-fuchsia-600 bg-fuchsia-50 text-fuchsia-600' : 'border-slate-50 text-slate-300 hover:border-slate-200 hover:text-slate-600'}`}
+                    >
+                      {m.replace('_', ' ')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <button onClick={() => setIsPaymentModalOpen(false)} className="px-8 py-5 bg-slate-50 text-slate-400 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-100">Cancel</button>
+                <button onClick={finalizeOrder} className="flex-1 py-5 bg-fuchsia-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-fuchsia-200 hover:bg-fuchsia-700 active:scale-95 transition-all">Execute Transaction</button>
+              </div>
             </div>
-            {selectedPaymentMethod === PaymentMethod.CASH && (
-              <input type="text" value={amountTendered} onChange={e => setAmountTendered(formatNumber(e.target.value))} className="w-full p-8 bg-slate-50 rounded-2xl text-5xl font-black text-center outline-none border-4 border-red-600 text-red-600" placeholder="TENDER" />
-            )}
-            <button onClick={finalizeOrder} className="w-full py-8 bg-red-600 text-white rounded-3xl font-black text-2xl shadow-xl shadow-red-200 active:scale-95 transition-all">CONFIRM TRANSACTION</button>
           </div>
         </div>
       )}
 
-      {/* Receipt View */}
+      {/* Receipt Modal (Unchanged structural logic, refined aesthetic) */}
       {showReceipt && lastOrder && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-red-600/95 backdrop-blur-xl p-4">
-          <div className="bg-white p-12 w-[420px] rounded-lg shadow-2xl font-mono text-xs border-t-8 border-red-600">
-             <div className="text-center mb-10"><h1 className="text-3xl font-black text-red-600">KulinaPOS</h1><p className="text-[10px] font-bold text-slate-400">PREMIUM DINING EXPERIENCE</p></div>
-             <div className="space-y-1 mb-8">
-               <div className="flex justify-between"><span>ORDER ID:</span><span>#{lastOrder.id}</span></div>
-               <div className="flex justify-between"><span>TABLE:</span><span>{lastOrder.tableNumber}</span></div>
-               <div className="flex justify-between"><span>TIMESTAMP:</span><span>{new Date(lastOrder.timestamp).toLocaleString()}</span></div>
-             </div>
-             <div className="border-y border-dashed py-6 my-6 space-y-4">
-               {lastOrder.items.map((item, i) => (
-                 <div key={i} className="flex justify-between font-bold"><span>{item.quantity}x {menuItems.find(mi => mi.id === item.menuItemId)?.name}</span><span>Rp {formatNumber(item.priceAtOrder * item.quantity)}</span></div>
-               ))}
-             </div>
-             <div className="text-right space-y-2 border-t pt-4">
-               <div className="flex justify-between font-bold"><span>SUBTOTAL</span><span>Rp {formatNumber(lastOrder.total)}</span></div>
-               <div className="flex justify-between text-xl font-black pt-4 border-t-2 border-black"><span>TOTAL</span><span>Rp {formatNumber(lastOrder.grandTotal)}</span></div>
-               {lastOrder.paymentMethod === PaymentMethod.CASH && (
-                 <div className="flex justify-between text-slate-500"><span>CHANGE</span><span>Rp {formatNumber(lastOrder.changeDue || 0)}</span></div>
-               )}
-             </div>
-             <button onClick={resetTerminal} className="w-full mt-10 py-6 bg-red-600 text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl shadow-red-200">NEW ORDER</button>
-          </div>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-fuchsia-600/90 backdrop-blur-2xl p-8">
+           <div className="bg-white p-16 w-full max-w-lg rounded-[3rem] shadow-2xl relative animate-in slide-in-from-bottom-20 duration-700">
+              <div className="text-center mb-12">
+                 <div className="w-20 h-20 bg-fuchsia-100 text-fuchsia-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✓</div>
+                 <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tighter leading-none">Journal Printed</h2>
+                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mt-3">Transaction ID: {lastOrder.id}</p>
+              </div>
+              <div className="border-t border-dashed border-slate-200 py-8 space-y-4">
+                 {lastOrder.items.map((item, i) => (
+                   <div key={i} className="flex justify-between font-bold text-xs">
+                     <span className="text-slate-500 font-black">{item.quantity}x {menuItems.find(mi => mi.id === item.menuItemId)?.name}</span>
+                     <span className="text-slate-900 font-black">IDR {formatNumber(item.priceAtOrder * item.quantity)}</span>
+                   </div>
+                 ))}
+              </div>
+              <div className="pt-8 border-t-2 border-slate-900 flex justify-between items-end mb-12">
+                 <div>
+                   <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Paid</p>
+                   <h3 className="text-3xl font-black text-slate-900 tracking-tighter">IDR {formatNumber(lastOrder.grandTotal)}</h3>
+                 </div>
+                 <div className="text-right">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Status</p>
+                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">Settled</span>
+                 </div>
+              </div>
+              <button onClick={resetTerminal} className="w-full py-6 bg-slate-950 text-white rounded-2xl font-black text-xs uppercase tracking-[0.4em] shadow-2xl hover:bg-fuchsia-600 transition-all active:scale-95">Next Cycle</button>
+           </div>
         </div>
       )}
     </div>

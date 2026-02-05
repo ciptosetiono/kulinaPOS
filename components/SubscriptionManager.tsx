@@ -18,27 +18,27 @@ const SubscriptionManager: React.FC = () => {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
       {MOCK_TENANT.isTrial && (
-        <div className="bg-red-50 border-2 border-red-100 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+        <div className="bg-fuchsia-50 border-2 border-fuchsia-100 rounded-[2.5rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
            <div className="flex items-center gap-6">
-              <div className="w-16 h-16 bg-red-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-red-200">🚀</div>
+              <div className="w-16 h-16 bg-fuchsia-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg shadow-fuchsia-200">🚀</div>
               <div>
-                <h3 className="text-xl font-black text-red-600 uppercase tracking-tight">Active Trial Node</h3>
-                <p className="text-sm font-bold text-red-400">90-day Free Trial is active for your organization.</p>
+                <h3 className="text-xl font-black text-fuchsia-600 uppercase tracking-tight">Active Trial Node</h3>
+                <p className="text-sm font-bold text-fuchsia-400">90-day Free Trial is active for your organization.</p>
               </div>
            </div>
            <div className="flex-1 w-full md:max-w-md px-6">
               <div className="flex justify-between mb-2">
-                <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">Trial Progress</span>
-                <span className="text-[10px] font-black text-red-600 uppercase tracking-widest">{daysLeft} Days Left</span>
+                <span className="text-[10px] font-black text-fuchsia-600 uppercase tracking-widest">Trial Progress</span>
+                <span className="text-[10px] font-black text-fuchsia-600 uppercase tracking-widest">{daysLeft} Days Left</span>
               </div>
-              <div className="w-full h-3 bg-red-200 rounded-full overflow-hidden">
+              <div className="w-full h-3 bg-fuchsia-200 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-red-600 transition-all duration-1000" 
+                  className="h-full bg-fuchsia-600 transition-all duration-1000" 
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
            </div>
-           <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-slate-200 hover:bg-red-600 transition-all">
+           <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-slate-200 hover:bg-fuchsia-600 transition-all">
              Unlock Full Plan
            </button>
         </div>
@@ -47,14 +47,14 @@ const SubscriptionManager: React.FC = () => {
       {/* Current Plan Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[3rem] p-10 text-white shadow-2xl shadow-slate-200 flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-fuchsia-600/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
           
           <div className="flex justify-between items-start">
             <div>
               <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-2">MaqPOS Level</p>
               <h2 className="text-4xl font-black tracking-tighter uppercase">{MOCK_TENANT.subscriptionPlan} {MOCK_TENANT.isTrial && '(Trial)'}</h2>
             </div>
-            <span className="px-6 py-2 bg-red-600 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-600/30">
+            <span className="px-6 py-2 bg-fuchsia-600 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-fuchsia-600/30">
               {MOCK_TENANT.isTrial ? '90-Day Free' : 'Active Paid'}
             </span>
           </div>
@@ -66,7 +66,7 @@ const SubscriptionManager: React.FC = () => {
             </div>
             <div>
               <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Daily Burn</p>
-              <p className="text-xl font-bold text-red-500">Rp 0</p>
+              <p className="text-xl font-bold text-fuchsia-500">Rp 0</p>
             </div>
             <div className="col-span-2 md:col-span-1">
               <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">MaqAI Capability</p>
@@ -75,13 +75,13 @@ const SubscriptionManager: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-red-50 flex flex-col justify-between">
+        <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-fuchsia-50 flex flex-col justify-between">
            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-12 bg-red-50 rounded-2xl flex items-center justify-center text-2xl">💳</div>
+              <div className="w-12 h-12 bg-fuchsia-50 rounded-2xl flex items-center justify-center text-2xl">💳</div>
               <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Billing Info</h3>
            </div>
            <p className="text-sm font-medium text-slate-500 leading-relaxed mb-6">No billing scheduled until {MOCK_TENANT.trialEndDate}. Update your backup payment anytime.</p>
-           <button className="w-full mt-auto py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-600 transition-all">
+           <button className="w-full mt-auto py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-fuchsia-600 transition-all">
              Manage Methods
            </button>
         </div>
@@ -98,27 +98,27 @@ const SubscriptionManager: React.FC = () => {
             <button className="w-full py-4 bg-slate-100 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-not-allowed">Standard</button>
           </div>
           {/* PREMIUM */}
-          <div className="bg-white p-8 rounded-[2.5rem] border-4 border-red-600 shadow-xl shadow-red-100 flex flex-col relative">
-            <div className="absolute top-0 right-8 -translate-y-1/2 bg-red-600 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest">Active Level</div>
-            <h4 className="text-xs font-black text-red-600 uppercase tracking-widest mb-2">Premium</h4>
+          <div className="bg-white p-8 rounded-[2.5rem] border-4 border-fuchsia-600 shadow-xl shadow-fuchsia-100 flex flex-col relative">
+            <div className="absolute top-0 right-8 -translate-y-1/2 bg-fuchsia-600 text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest">Active Level</div>
+            <h4 className="text-xs font-black text-fuchsia-600 uppercase tracking-widest mb-2">Premium</h4>
             <div className="text-2xl font-black text-slate-900 mb-6">Rp 1.299k <span className="text-xs font-bold text-slate-400">/ mo</span></div>
             <button className="w-full py-4 bg-slate-50 text-slate-400 rounded-xl font-black uppercase tracking-widest text-[10px] cursor-default">Current Plan</button>
           </div>
           {/* ENTERPRISE */}
           <div className="bg-slate-900 p-8 rounded-[2.5rem] flex flex-col shadow-2xl">
-            <h4 className="text-xs font-black text-red-500 uppercase tracking-widest mb-2">Enterprise</h4>
+            <h4 className="text-xs font-black text-fuchsia-500 uppercase tracking-widest mb-2">Enterprise</h4>
             <div className="text-2xl font-black text-white mb-6">Custom <span className="text-xs font-bold text-slate-500">/ mo</span></div>
-            <button className="w-full py-4 bg-red-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-red-700 transition-all">Request Omni</button>
+            <button className="w-full py-4 bg-fuchsia-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-fuchsia-700 transition-all">Request Omni</button>
           </div>
         </div>
       </div>
 
       {/* Invoice History */}
       <div className="pt-10">
-        <div className="bg-white rounded-[3rem] border border-red-50 overflow-hidden shadow-sm">
-          <div className="p-8 border-b border-red-50 flex justify-between items-center">
+        <div className="bg-white rounded-[3rem] border border-fuchsia-50 overflow-hidden shadow-sm">
+          <div className="p-8 border-b border-fuchsia-50 flex justify-between items-center">
             <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Ledger Archive</h3>
-            <button className="text-[10px] font-black text-red-600 uppercase tracking-widest hover:underline">Export Statements</button>
+            <button className="text-[10px] font-black text-fuchsia-600 uppercase tracking-widest hover:underline">Export Statements</button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -132,9 +132,9 @@ const SubscriptionManager: React.FC = () => {
                   <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">ACTION</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-red-50/30">
+              <tbody className="divide-y divide-fuchsia-50/30">
                 {MOCK_INVOICES.map(inv => (
-                  <tr key={inv.id} className="hover:bg-red-50/20 transition-colors group">
+                  <tr key={inv.id} className="hover:bg-fuchsia-50/20 transition-colors group">
                     <td className="px-8 py-6 font-black text-slate-800 tracking-tighter text-sm">{inv.id}</td>
                     <td className="px-8 py-6">
                        <span className="text-xs font-bold text-slate-500">{inv.plan}</span>
@@ -149,7 +149,7 @@ const SubscriptionManager: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-8 py-6 text-right">
-                      <button className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all">
+                      <button className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center hover:bg-fuchsia-50 hover:text-fuchsia-600 transition-all">
                         📄
                       </button>
                     </td>

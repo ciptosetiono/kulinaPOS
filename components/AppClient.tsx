@@ -70,7 +70,7 @@ export default function AppClient({ initialMenu, initialOrders }: AppClientProps
       });
       if (!res.ok) throw new Error('Sync failed');
     } catch (err) {
-      console.warn('Offline: Pesanan disimpan secara lokal');
+      console.warn('Offline: Data stored in local buffer');
     }
   };
 
@@ -88,7 +88,7 @@ export default function AppClient({ initialMenu, initialOrders }: AppClientProps
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-[#f8fafc] selection:bg-fuchsia-100 selection:text-fuchsia-900">
       <Sidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab}
@@ -102,42 +102,49 @@ export default function AppClient({ initialMenu, initialOrders }: AppClientProps
         isOnline={isOnline}
       />
       
-      <main className={`flex-1 p-10 transition-all duration-300 ${isSidebarCollapsed ? 'ml-24' : 'ml-64'}`}>
-        <header className="mb-8 flex justify-between items-end">
+      <main className={`flex-1 p-10 transition-all duration-500 ${isSidebarCollapsed ? 'ml-24' : 'ml-72'}`}>
+        <header className="mb-12 flex justify-between items-end relative">
            <div>
-              <h1 className="text-4xl font-black text-slate-900 tracking-tighter capitalize">{activeTab.replace('-', ' ')}</h1>
-              <p className="text-slate-400 mt-1 font-medium">{config.appName} v{config.version}</p>
+              <div className="flex items-center gap-3 mb-2">
+                <span className="px-3 py-1 bg-fuchsia-50 text-fuchsia-600 rounded-full text-[8px] font-black uppercase tracking-[0.2em] border border-fuchsia-100">Enterprise Node</span>
+                <span className="text-[10px] text-slate-300 font-bold tracking-widest">v{config.version}</span>
+              </div>
+              <h1 className="text-5xl font-black text-slate-950 tracking-tighter capitalize">{activeTab.replace('-', ' ')}</h1>
            </div>
-           <div className="text-right hidden md:block">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Outlet Aktif</p>
-              <p className="text-sm font-black text-red-600">{MOCK_OUTLETS.find(o => o.id === currentOutletId)?.name}</p>
+           <div className="text-right hidden md:flex flex-col items-end gap-2">
+              <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-100 shadow-sm">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Node: <span className="text-fuchsia-600">{MOCK_OUTLETS.find(o => o.id === currentOutletId)?.name}</span></p>
+              </div>
            </div>
         </header>
 
-        {activeTab === 'dashboard' && <Dashboard orders={orders} />}
-        {activeTab === 'pos' && (
-          <POS 
-            onOrderSubmit={handleOrderSubmit} 
-            onExit={() => setActiveTab('dashboard')}
-            menuItems={menuItems}
-            categories={['Main Course', 'Beverage', 'Appetizer']} 
-            promos={promos}
-            tables={tables}
-            outletId={currentOutletId}
-            existingOrders={orders}
-          />
-        )}
-        {activeTab === 'tables' && <TableManager tables={tables} setTables={setTables} outletId={currentOutletId} />}
-        {activeTab === 'orders' && <SalesManager orders={orders} />}
-        {activeTab === 'menu' && <MenuManager items={menuItems} setItems={setMenuItems} />}
-        {activeTab === 'inventory' && <InventoryManager inventory={inventory} setInventory={setInventory} />}
-        {activeTab === 'customers' && <CustomerManager customers={customers} feedbacks={[]} />}
-        {activeTab === 'staff' && <StaffManager staff={staff} setStaff={setStaff} />}
-        {activeTab === 'promos' && <PromoManager promos={promos} setPromos={setPromos} />}
-        {activeTab === 'suppliers' && <SupplierManager suppliers={suppliers} purchaseOrders={[]} />}
-        {activeTab === 'subscription' && <SubscriptionManager />}
-        {activeTab === 'docs' && <Documentation />}
-        {activeTab === 'ai-hub' && <AIHub />}
+        <div className="relative z-10">
+          {activeTab === 'dashboard' && <Dashboard orders={orders} />}
+          {activeTab === 'pos' && (
+            <POS 
+              onOrderSubmit={handleOrderSubmit} 
+              onExit={() => setActiveTab('dashboard')}
+              menuItems={menuItems}
+              categories={['Main Course', 'Beverage', 'Appetizer']} 
+              promos={promos}
+              tables={tables}
+              outletId={currentOutletId}
+              existingOrders={orders}
+            />
+          )}
+          {activeTab === 'tables' && <TableManager tables={tables} setTables={setTables} outletId={currentOutletId} />}
+          {activeTab === 'orders' && <SalesManager orders={orders} />}
+          {activeTab === 'menu' && <MenuManager items={menuItems} setItems={setMenuItems} />}
+          {activeTab === 'inventory' && <InventoryManager inventory={inventory} setInventory={setInventory} />}
+          {activeTab === 'customers' && <CustomerManager customers={customers} feedbacks={[]} />}
+          {activeTab === 'staff' && <StaffManager staff={staff} setStaff={setStaff} />}
+          {activeTab === 'promos' && <PromoManager promos={promos} setPromos={setPromos} />}
+          {activeTab === 'suppliers' && <SupplierManager suppliers={suppliers} purchaseOrders={[]} />}
+          {activeTab === 'subscription' && <SubscriptionManager />}
+          {activeTab === 'docs' && <Documentation />}
+          {activeTab === 'ai-hub' && <AIHub />}
+        </div>
       </main>
     </div>
   );

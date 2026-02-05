@@ -2,7 +2,7 @@
 import { INITIAL_MENU, MOCK_OUTLETS, INITIAL_CUSTOMERS, INITIAL_TABLES } from '../constants';
 import { config } from './config';
 
-// Prefix keys with storage namespace from .env/config
+// Prefix keys with storage namespace from config
 const prefix = config.storagePrefix;
 
 const KEYS = {
@@ -15,13 +15,17 @@ const KEYS = {
 };
 
 class LocalPersistentDB {
+  private isBrowser = typeof window !== 'undefined';
+
   private getStorage<T>(key: string, defaultValue: T): T {
-    const data = localStorage.getItem(key);
-    if (!data) {
-      this.setStorage(key, defaultValue);
-      return defaultValue;
-    }
+    if (!this.isBrowser) return defaultValue;
+    
     try {
+      const data = localStorage.getItem(key);
+      if (!data) {
+        this.setStorage(key, defaultValue);
+        return defaultValue;
+      }
       return JSON.parse(data);
     } catch (e) {
       console.error(`Failed to parse storage for key: ${key}`, e);
@@ -30,7 +34,13 @@ class LocalPersistentDB {
   }
 
   private setStorage(key: string, data: any) {
-    localStorage.setItem(key, JSON.stringify(data));
+    if (this.isBrowser) {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (e) {
+        console.error(`Failed to set storage for key: ${key}`, e);
+      }
+    }
   }
 
   menuItem = {

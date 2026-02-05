@@ -21,7 +21,7 @@ const Documentation: React.FC = () => {
             <a 
               key={s.id} 
               href={`#doc-${s.id}`}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white hover:shadow-sm text-sm font-bold text-slate-500 hover:text-red-600 transition-all group"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white hover:shadow-sm text-sm font-bold text-slate-500 hover:text-fuchsia-600 transition-all group"
             >
               <span className="opacity-50 group-hover:opacity-100">{s.icon}</span>
               {s.title}
@@ -43,9 +43,9 @@ const Documentation: React.FC = () => {
             <p className="text-lg text-slate-600 leading-relaxed">
               Selamat datang di KulinaPOS Enterprise. Panduan ini dirancang untuk memastikan outlet Anda beroperasi dengan efisiensi maksimal sejak hari pertama.
             </p>
-            <div className="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-2xl">
-              <p className="text-sm font-bold text-red-900 mb-2 uppercase tracking-tight">Penting untuk Diketahui:</p>
-              <p className="text-sm text-red-700 leading-relaxed">KulinaPOS menggunakan teknologi <strong>Cloud-Native</strong>. Artinya, data Anda selalu aman di server kami, namun sistem tetap bisa beroperasi secara <strong>offline</strong> di terminal kasir Anda.</p>
+            <div className="bg-fuchsia-50 border-l-4 border-fuchsia-600 p-6 rounded-r-2xl">
+              <p className="text-sm font-bold text-fuchsia-900 mb-2 uppercase tracking-tight">Penting untuk Diketahui:</p>
+              <p className="text-sm text-fuchsia-700 leading-relaxed">KulinaPOS menggunakan teknologi <strong>Cloud-Native</strong>. Artinya, data Anda selalu aman di server kami, namun sistem tetap bisa beroperasi secara <strong>offline</strong> di terminal kasir Anda.</p>
             </div>
             <div className="space-y-4">
               <h4 className="font-black text-slate-800 uppercase text-xs tracking-widest">Langkah Konfigurasi:</h4>
@@ -89,8 +89,8 @@ const Documentation: React.FC = () => {
           <div className="space-y-6">
             <p className="text-slate-600 font-medium">Lacak setiap gram bahan baku Anda secara presisi untuk mengurangi limbah (waste).</p>
             <div className="bg-slate-900 text-white p-10 rounded-[3rem] shadow-xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/20 blur-2xl rounded-full"></div>
-               <h4 className="text-red-500 font-black text-xs uppercase tracking-widest mb-4">Threshold Alert</h4>
+               <div className="absolute top-0 right-0 w-32 h-32 bg-fuchsia-600/20 blur-2xl rounded-full"></div>
+               <h4 className="text-fuchsia-500 font-black text-xs uppercase tracking-widest mb-4">Threshold Alert</h4>
                <p className="text-slate-400 text-sm leading-relaxed italic">"Sistem akan otomatis memberikan peringatan '⚠️ Restock Required' jika jumlah stok berada di bawah batas minimum yang Anda tentukan."</p>
             </div>
           </div>
@@ -105,14 +105,14 @@ const Documentation: React.FC = () => {
           <div className="space-y-6">
             <p className="text-slate-600 font-medium">KulinaPOS mendukung portabilitas data penuh. Anda bisa menarik data kapan saja untuk keperluan audit atau akuntansi.</p>
             <div className="space-y-4">
-              <div className="flex items-center gap-4 p-4 border-2 border-slate-100 rounded-2xl group hover:border-red-100 transition-all">
+              <div className="flex items-center gap-4 p-4 border-2 border-slate-100 rounded-2xl group hover:border-fuchsia-100 transition-all">
                 <div className="w-10 h-10 bg-slate-50 flex items-center justify-center rounded-lg text-lg">📄</div>
                 <div>
                   <h5 className="font-black text-slate-900 text-xs uppercase">Format CSV</h5>
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Compatible with Microsoft Excel, Google Sheets, & Numbers</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 p-4 border-2 border-slate-100 rounded-2xl group hover:border-red-100 transition-all">
+              <div className="flex items-center gap-4 p-4 border-2 border-slate-100 rounded-2xl group hover:border-fuchsia-100 transition-all">
                 <div className="w-10 h-10 bg-slate-50 flex items-center justify-center rounded-lg text-lg">📁</div>
                 <div>
                   <h5 className="font-black text-slate-900 text-xs uppercase">Modul Tersedia</h5>

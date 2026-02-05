@@ -1,4 +1,5 @@
-
+// Add explicit React import to fix "Cannot find namespace 'React'" error in TypeScript
+import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css"; // Diasumsikan tailwind diimpor di sini

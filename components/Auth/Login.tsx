@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import AuthLayout from './AuthLayout';
 
@@ -18,7 +19,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
   return (
     <AuthLayout 
       title="Secure Login" 
-      subtitle="Access your Redline Terminal"
+      subtitle="Access your Magenta Terminal"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
@@ -28,7 +29,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-red-600 transition-all placeholder:text-slate-700"
+            className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-fuchsia-600 transition-all placeholder:text-slate-700"
             placeholder="ceo@maqpos.com"
           />
         </div>
@@ -39,7 +40,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
             <button 
               type="button"
               onClick={() => onNavigate('forgot')}
-              className="text-[10px] font-black text-red-600 uppercase tracking-widest hover:text-red-500"
+              className="text-[10px] font-black text-fuchsia-600 uppercase tracking-widest hover:text-fuchsia-500"
             >
               Reset?
             </button>
@@ -49,14 +50,14 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-red-600 transition-all placeholder:text-slate-700"
+            className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-fuchsia-600 transition-all placeholder:text-slate-700"
             placeholder="••••••••"
           />
         </div>
 
         <button 
           type="submit"
-          className="w-full py-5 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-2xl shadow-red-600/30 transition-all active:scale-95"
+          className="w-full py-5 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-2xl shadow-fuchsia-600/30 transition-all active:scale-95"
         >
           AUTHENTICATE
         </button>
@@ -67,7 +68,7 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
             <button 
               type="button"
               onClick={() => onNavigate('register')}
-              className="text-red-600 font-black hover:underline uppercase tracking-tighter"
+              className="text-fuchsia-600 font-black hover:underline uppercase tracking-tighter"
             >
               Initialize Node
             </button>

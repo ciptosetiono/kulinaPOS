@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from '../types';
 import { config } from '../lib/config';
 
@@ -28,84 +28,89 @@ const Sidebar: React.FC<SidebarProps> = ({
   onOpenCustomerPortal,
   isOnline
 }) => {
-  // Ordered by: Overview -> Sales -> Ops -> CRM -> Management -> Settings
   const menuItems = [
-    { id: 'dashboard', label: 'Ringkasan', icon: '📊' },
-    { id: 'pos', label: 'Kasir (POS)', icon: '🛒' },
-    { id: 'tables', label: 'Denah Meja', icon: '🪑' },
-    { id: 'orders', label: 'Riwayat Sales', icon: '📝' },
-    { id: 'menu', label: 'Katalog Menu', icon: '🍽️' },
-    { id: 'inventory', label: 'Stok Bahan', icon: '📦' },
-    { id: 'customers', label: 'Pelanggan', icon: '👑' },
-    { id: 'staff', label: 'Karyawan', icon: '👥' },
-    { id: 'promos', label: 'Promo/Diskon', icon: '🏷️' },
-    { id: 'suppliers', label: 'Suplier', icon: '🚚' },
-    { id: 'subscription', label: 'Langganan', icon: '💎' },
-    { id: 'docs', label: 'Dokumentasi', icon: '📚' },
-    { id: 'ai-hub', label: 'Wawasan', icon: '✨' },
+    { id: 'dashboard', label: 'Business Insights', icon: '📊' },
+    { id: 'pos', label: 'Sales Terminal', icon: '🛒' },
+    { id: 'orders', label: 'Sales Journal', icon: '📝' },
+    { id: 'tables', label: 'Floor Blueprint', icon: '🪑' },
+    { id: 'menu', label: 'Product Catalog', icon: '🍽️' },
+    { id: 'inventory', label: 'Stock & Supplies', icon: '📦' },
+    { id: 'customers', label: 'CRM & Loyalty', icon: '👑' },
+    { id: 'ai-hub', label: 'AI Wawasan', icon: '✨' },
+    { id: 'docs', label: 'Operations Vault', icon: '📚' },
   ];
 
   return (
-    <div className={`${isCollapsed ? 'w-24' : 'w-64'} bg-slate-900 h-screen fixed left-0 top-0 flex flex-col text-white shadow-2xl z-50 transition-all duration-300`}>
-      <div className={`p-6 border-b border-slate-800 flex items-center gap-2 overflow-hidden ${isCollapsed ? 'justify-center' : ''}`}>
-        <span className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg shadow-red-900/50">K</span>
+    <div className={`${isCollapsed ? 'w-24' : 'w-72'} bg-[#020617] h-screen fixed left-0 top-0 flex flex-col text-white shadow-2xl z-50 transition-all duration-500 border-r border-white/5`}>
+      {/* Brand Header */}
+      <div className={`h-24 px-8 border-b border-white/5 flex items-center gap-4 overflow-hidden ${isCollapsed ? 'justify-center px-0' : ''}`}>
+        <div className="w-10 h-10 bg-gradient-to-br from-fuchsia-500 to-fuchsia-700 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-fuchsia-950">
+          <span className="font-black text-lg">K</span>
+        </div>
         {!isCollapsed && (
           <div className="flex flex-col">
-            <span className="text-xl font-black text-white tracking-tighter uppercase">Kulina<span className="text-red-600">POS</span></span>
-            <div className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-red-500 animate-pulse' : 'bg-slate-500'}`}></span>
-              <span className="text-[8px] font-black uppercase text-slate-500 tracking-widest">{isOnline ? 'Online' : 'Offline'}</span>
+            <span className="text-xl font-black tracking-tighter uppercase leading-none">Kulina<span className="text-fuchsia-500">POS</span></span>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-fuchsia-500 shadow-[0_0_8px_fuchsia]' : 'bg-slate-600'}`}></span>
+              <span className="text-[8px] font-black uppercase text-slate-500 tracking-[0.2em]">{isOnline ? 'Network Active' : 'Offline Mode'}</span>
             </div>
           </div>
         )}
       </div>
       
+      {/* Customer Portal Quick Access */}
       {!isCollapsed && (
-        <div className="px-4 py-6 border-b border-slate-800">
+        <div className="p-6">
           <button 
             onClick={onOpenCustomerPortal}
-            className="w-full bg-red-600/10 hover:bg-red-600/20 p-4 rounded-2xl flex flex-col items-center justify-center transition-all border border-red-600/20 group"
+            className="w-full bg-fuchsia-600/10 hover:bg-fuchsia-600/20 p-5 rounded-3xl flex items-center gap-4 transition-all border border-fuchsia-600/20 group"
           >
-            <span className="text-2xl mb-1 group-hover:scale-110 transition-transform">📱</span>
-            <p className="text-[10px] font-black uppercase text-red-600 tracking-widest">Akses Menu QR</p>
+            <span className="text-2xl group-hover:scale-110 transition-transform">📱</span>
+            <div className="text-left">
+              <p className="text-[10px] font-black uppercase text-fuchsia-500 tracking-[0.2em]">Customer QR</p>
+              <p className="text-[8px] font-bold uppercase text-slate-500 mt-0.5">Scan & Order</p>
+            </div>
           </button>
         </div>
       )}
 
-      <nav className="flex-1 mt-6 px-4 space-y-1 overflow-y-auto scrollbar-hide pb-10">
+      {/* Main Navigation */}
+      <nav className="flex-1 mt-4 px-4 space-y-1 overflow-y-auto scrollbar-hide pb-10">
+        <p className={`text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] mb-4 ml-4 ${isCollapsed ? 'hidden' : ''}`}>Management Hub</p>
         {menuItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setActiveTab(item.id)}
-            className={`w-full flex items-center rounded-xl transition-all ${isCollapsed ? 'justify-center p-4' : 'px-4 py-3 gap-3'} ${
+            className={`w-full flex items-center rounded-2xl transition-all duration-300 ${isCollapsed ? 'justify-center h-14' : 'px-6 py-4 gap-4'} ${
               activeTab === item.id 
-                ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' 
-                : 'text-slate-400 hover:bg-slate-800 hover:text-white'
+                ? 'bg-fuchsia-600 text-white shadow-[0_10px_20px_-10px_rgba(192,38,211,0.5)]' 
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <span className="text-xl shrink-0">{item.icon}</span>
+            <span className={`text-xl shrink-0 ${activeTab === item.id ? 'scale-110' : 'opacity-60'}`}>{item.icon}</span>
             {!isCollapsed && <span className="font-bold tracking-tight text-sm whitespace-nowrap">{item.label}</span>}
           </button>
         ))}
       </nav>
 
-      <div className={`p-6 border-t border-slate-800 flex flex-col shrink-0 gap-4`}>
-        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'}`}>
-          <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden shrink-0 ring-2 ring-slate-800">
-            <img src="https://picsum.photos/seed/admin/100/100" alt="Admin" />
+      {/* Profile Footer */}
+      <div className={`p-6 border-t border-white/5 flex flex-col shrink-0 gap-6 bg-[#01040a]`}>
+        <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'}`}>
+          <div className="w-12 h-12 rounded-2xl bg-slate-800 overflow-hidden shrink-0 border border-white/10 shadow-xl">
+            <img src="https://picsum.photos/seed/admin/100/100" alt="Admin" className="w-full h-full object-cover" />
           </div>
           {!isCollapsed && (
             <div className="overflow-hidden">
-              <div className="text-sm font-semibold text-white truncate">Alexander Kulina</div>
-              <div className="text-[10px] text-slate-500 font-bold uppercase">Owner</div>
+              <div className="text-sm font-bold text-white truncate tracking-tight">Alexander Kulina</div>
+              <div className="text-[9px] text-fuchsia-500 font-black uppercase tracking-[0.2em]">Global Admin</div>
             </div>
           )}
         </div>
+        
         {!isCollapsed && (
-          <div className="space-y-2">
-             <div className="text-[8px] text-slate-600 font-black uppercase text-center">v{config.version}</div>
-             <button onClick={onLogout} className="w-full py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors">Keluar</button>
-          </div>
+          <button onClick={onLogout} className="w-full py-4 bg-white/5 hover:bg-red-500/10 text-slate-500 hover:text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/5 border-dashed">
+            Sign Out
+          </button>
         )}
       </div>
     </div>
