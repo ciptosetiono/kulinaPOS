@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 16, "column": 0}, "map": {"version":3,"sources":["file:///C:/kulina-pos/middleware.ts"],"sourcesContent":["\r\nimport { NextResponse } from 'next/server';\r\nimport type { NextRequest } from 'next/server';\r\n\r\nexport function middleware(request: NextRequest) {\r\n  const authCookie = request.cookies.get('zenpos_session');\r\n\r\n  // Proteksi rute internal\r\n  if (!authCookie && !request.nextUrl.pathname.startsWith('/login')) {\r\n    // return NextResponse.redirect(new URL('/login', request.url));\r\n    // Dimentahkan dulu untuk keperluan demo browser environment\r\n  }\r\n\r\n  return NextResponse.next();\r\n}\r\n\r\nexport const config = {\r\n  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],\r\n};\r\n"],"names":["middleware","request","authCookie","cookies","get","nextUrl","pathname","startsWith","next","config","matcher"],"mappings":";;;;;;AACA;AAAA;;AAGO,SAASA,WAAWC,OAAoB;IAC7C,MAAMC,aAAaD,QAAQE,OAAO,CAACC,GAAG,CAAC;IAEvC,yBAAyB;IACzB,IAAI,CAACF,cAAc,CAACD,QAAQI,OAAO,CAACC,QAAQ,CAACC,UAAU,CAAC,WAAW;IACjE,gEAAgE;IAChE,4DAA4D;IAC9D;IAEA,OAAO,6MAAY,CAACC,IAAI;AAC1B;AAEO,MAAMC,SAAS;IACpBC,SAAS;QAAC;KAAoD;AAChE"}}]
+}

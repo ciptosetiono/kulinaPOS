@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import POS from './POS';
@@ -27,6 +28,7 @@ interface AppClientProps {
 }
 
 export default function AppClient({ initialMenu, initialOrders }: AppClientProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [menuItems, setMenuItems] = useState<MenuItem[]>(initialMenu);
@@ -97,7 +99,7 @@ export default function AppClient({ initialMenu, initialOrders }: AppClientProps
         outlets={MOCK_OUTLETS}
         currentOutlet={MOCK_OUTLETS.find(o => o.id === currentOutletId)!}
         onSwitchOutlet={setCurrentOutletId}
-        onLogout={() => { window.location.href = '/'; }}
+        onLogout={() => router.push('/')}
         onOpenCustomerPortal={() => setShowCustomerPortal(true)}
         isOnline={isOnline}
       />

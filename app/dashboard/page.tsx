@@ -1,21 +1,40 @@
 
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import AppClient from '@/components/AppClient';
 import { fetchMenuItems, fetchOrders } from '@/actions';
-import { MOCK_TENANT } from '@/constants';
+import { MOCK_TENANT, INITIAL_MENU } from '@/constants';
+import { MenuItem, Order } from '@/types';
 
-export default async function DashboardPage() {
-  // Next.js Server Side Data Fetching
-  // In real scenario, outletId would come from user session
-  const initialData = {
-    menu: await fetchMenuItems(MOCK_TENANT.id),
-    orders: await fetchOrders('outlet-1'),
-  };
+export default function DashboardPage() {
+  const [menu, setMenu] = useState<MenuItem[]>(INITIAL_MENU);
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadInitialData() {
+      try {
+        const fetchedMenu = await fetchMenuItems(MOCK_TENANT.id);
+        const fetchedOrders = await fetchOrders('outlet-1');
+        if (isMounted) {
+          if (fetchedMenu) setMenu(fetchedMenu);
+          if (fetchedOrders) setOrders(fetchedOrders);
+        }
+      } catch (err) {
+        console.error('Failed to fetch initial dashboard data:', err);
+      }
+    }
+    loadInitialData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <AppClient 
-      initialMenu={initialData.menu} 
-      initialOrders={initialData.orders} 
+      initialMenu={menu} 
+      initialOrders={orders} 
     />
   );
 }

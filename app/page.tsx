@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const testimonials = [
   {
@@ -84,11 +85,11 @@ const pricingPlans = [
 ];
 
 export default function LandingPage() {
+  const router = useRouter();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   const navigateTo = (path: string) => {
-    window.history.pushState({}, '', path);
-    window.dispatchEvent(new CustomEvent('navigate'));
+    router.push(path);
   };
 
   useEffect(() => {
