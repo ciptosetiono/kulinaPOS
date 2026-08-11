@@ -2,14 +2,13 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import Login from '@/components/Auth/Login';
+import ForgotPassword from '@/components/Auth/ForgotPassword';
 
 export default function ForgotPage() {
   const router = useRouter();
 
   return (
-    <Login 
-      onLogin={() => router.push('/dashboard')} 
+    <ForgotPassword 
       onNavigate={(page) => router.push(`/${page}`)} 
     />
   );
