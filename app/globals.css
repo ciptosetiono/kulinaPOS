@@ -21,6 +21,22 @@
   background: #c026d3;
 }
 
+/* Struk kasir: disembunyikan di layar, hanya tampil saat dicetak */
+#receipt-print {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 80mm;
+  visibility: hidden;
+  font-family: 'Space Mono', monospace;
+  color: #000;
+  background: #fff;
+}
+
+@page {
+  margin: 0;
+}
+
 @media print {
   body * {
     visibility: hidden;

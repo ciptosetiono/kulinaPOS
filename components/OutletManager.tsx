@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Outlet } from '../types';
 
@@ -33,10 +32,10 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
 
   const removeOutlet = (id: string) => {
     if (outlets.length <= 1) {
-      alert("At least one outlet must remain active.");
+      alert("Setidaknya satu outlet harus tetap aktif.");
       return;
     }
-    if (confirm("Are you sure? All data linked specifically to this outlet might become inaccessible.")) {
+    if (confirm("Apakah Anda yakin? Semua data yang terhubung ke outlet ini mungkin menjadi tidak dapat diakses.")) {
       setOutlets(prev => prev.filter(o => o.id !== id));
     }
   };
@@ -45,14 +44,14 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Outlet Management</h2>
-          <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Configure your business branches</p>
+          <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Manajemen Outlet / Cabang</h2>
+          <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Konfigurasi cabang bisnis Anda</p>
         </div>
         <button 
           onClick={() => { setIsAdding(true); setEditingOutlet({ name: '', address: '', phone: '' }); }}
           className="bg-slate-900 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-lg shadow-slate-200"
         >
-          Add New Branch <span className="text-lg">+</span>
+          Tambah Cabang Baru <span className="text-lg">+</span>
         </button>
       </div>
 
@@ -64,7 +63,7 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
               <div className="flex gap-2">
                 <button 
                   onClick={() => { setEditingOutlet(outlet); setIsAdding(true); }}
-                  className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-[#3f51b5] hover:bg-indigo-50 flex items-center justify-center transition-all"
+                  className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 hover:text-fuchsia-600 hover:bg-fuchsia-50 flex items-center justify-center transition-all"
                 >
                   ✎
                 </button>
@@ -78,7 +77,7 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
             </div>
 
             <h3 className="text-xl font-black text-slate-800 mb-2">{outlet.name}</h3>
-            <p className="text-[10px] font-black text-[#3f51b5] uppercase tracking-widest mb-4">Branch ID: {outlet.id}</p>
+            <p className="text-[10px] font-black text-fuchsia-600 uppercase tracking-widest mb-4">ID Cabang: {outlet.id}</p>
             
             <div className="space-y-3 mt-auto">
               <div className="flex items-start gap-3">
@@ -92,8 +91,8 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
             </div>
 
             <div className="mt-8 pt-6 border-t border-slate-50 flex justify-between items-center">
-              <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-black uppercase tracking-widest">Active</span>
-              <button className="text-[10px] font-black uppercase tracking-widest text-[#3f51b5] hover:underline">View Performance →</button>
+              <span className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[9px] font-black uppercase tracking-widest">Aktif</span>
+              <button className="text-[10px] font-black uppercase tracking-widest text-fuchsia-600 hover:underline">Lihat Performa →</button>
             </div>
           </div>
         ))}
@@ -103,26 +102,26 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
         <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl p-10 space-y-8 animate-in zoom-in duration-300">
             <h3 className="text-2xl font-black text-slate-900 uppercase text-center tracking-tight">
-              {editingOutlet?.id ? 'Edit Branch' : 'New Branch'}
+              {editingOutlet?.id ? 'Edit Cabang' : 'Cabang Baru'}
             </h3>
             
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Branch Name</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Nama Cabang</label>
                 <input 
                   autoFocus
-                  placeholder="e.g. West Coast Bistro"
-                  className="w-full px-6 py-4 bg-slate-50 rounded-2xl border-none font-bold outline-none focus:ring-2 focus:ring-[#3f51b5]"
+                  placeholder="Contoh: Outlet Cabang Jakarta"
+                  className="w-full px-6 py-4 bg-slate-50 rounded-2xl border-none font-bold outline-none focus:ring-2 focus:ring-fuchsia-600"
                   value={editingOutlet?.name || ''}
                   onChange={e => setEditingOutlet({...editingOutlet, name: e.target.value})}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Physical Address</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Alamat Lengkap</label>
                 <textarea 
-                  placeholder="Street, City, Postcode"
-                  className="w-full px-6 py-4 bg-slate-50 rounded-2xl border-none font-bold outline-none focus:ring-2 focus:ring-[#3f51b5]"
+                  placeholder="Jalan, Kota, Kode Pos"
+                  className="w-full px-6 py-4 bg-slate-50 rounded-2xl border-none font-bold outline-none focus:ring-2 focus:ring-fuchsia-600"
                   rows={3}
                   value={editingOutlet?.address || ''}
                   onChange={e => setEditingOutlet({...editingOutlet, address: e.target.value})}
@@ -130,10 +129,10 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Contact Number</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Nomor Telepon</label>
                 <input 
-                  placeholder="Phone or Mobile"
-                  className="w-full px-6 py-4 bg-slate-50 rounded-2xl border-none font-bold outline-none focus:ring-2 focus:ring-[#3f51b5]"
+                  placeholder="Telepon / No HP"
+                  className="w-full px-6 py-4 bg-slate-50 rounded-2xl border-none font-bold outline-none focus:ring-2 focus:ring-fuchsia-600"
                   value={editingOutlet?.phone || ''}
                   onChange={e => setEditingOutlet({...editingOutlet, phone: e.target.value})}
                 />
@@ -145,13 +144,13 @@ const OutletManager: React.FC<OutletManagerProps> = ({ outlets, setOutlets, tena
                 onClick={() => { setIsAdding(false); setEditingOutlet(null); }} 
                 className="flex-1 py-4 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition-colors"
                >
-                 Discard
+                 Batal
                </button>
                <button 
                 onClick={handleSave} 
-                className="flex-[2] py-4 bg-[#3f51b5] text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-indigo-100 hover:bg-indigo-600 transition-all"
+                className="flex-[2] py-4 bg-fuchsia-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-fuchsia-100 hover:bg-fuchsia-700 transition-all"
                >
-                 Save Changes
+                 Simpan Perubahan
                </button>
             </div>
           </div>

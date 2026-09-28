@@ -1,9 +1,10 @@
+"use server";
 
 import { GoogleGenAI, Type } from "@google/genai";
 import { MenuItem } from "../types";
 
-// Always use a named parameter for apiKey and obtain it exclusively from process.env.API_KEY.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Always use a named parameter for apiKey and obtain it exclusively from process.env.GOOGLE_AI_API_KEY.
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY });
 
 export const getBusinessInsights = async (salesData: any[], inventory: any[]) => {
   const prompt = `

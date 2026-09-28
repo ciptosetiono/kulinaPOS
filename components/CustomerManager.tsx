@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Customer, Feedback } from '../types';
 import { exportToCSV } from '../lib/exportUtils';
@@ -21,7 +20,7 @@ const CustomerManager: React.FC<CustomerManagerProps> = ({ customers, feedbacks 
       Poin: c.points,
       Total_Belanja: c.totalSpent
     }));
-    exportToCSV(exportData, 'KulinaPOS_Customer_Database');
+    exportToCSV(exportData, 'Database_Pelanggan_KulinaPOS');
   };
 
   return (
@@ -30,8 +29,8 @@ const CustomerManager: React.FC<CustomerManagerProps> = ({ customers, feedbacks 
         <div className="flex gap-4">
           {[
             { id: 'list', label: 'Database', icon: '📋' },
-            { id: 'loyalty', label: 'Loyalty Tiers', icon: '👑' },
-            { id: 'feedback', label: 'Reviews', icon: '⭐' }
+            { id: 'loyalty', label: 'Tingkat Loyalitas', icon: '👑' },
+            { id: 'feedback', label: 'Ulasan & Masukan', icon: '⭐' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -48,7 +47,7 @@ const CustomerManager: React.FC<CustomerManagerProps> = ({ customers, feedbacks 
         {activeTab === 'list' && (
           <button 
             onClick={handleExport}
-            className="bg-white border-2 border-slate-100 text-slate-900 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-red-50 hover:border-red-100 transition-all flex items-center gap-2 shadow-sm"
+            className="bg-white border-2 border-slate-100 text-slate-900 px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-fuchsia-50 hover:border-fuchsia-100 transition-all flex items-center gap-2 shadow-sm"
           >
             <span>Ekspor CSV</span>
             <span className="text-lg">📥</span>
@@ -61,11 +60,11 @@ const CustomerManager: React.FC<CustomerManagerProps> = ({ customers, feedbacks 
           <table className="w-full text-left">
             <thead className="bg-slate-50 border-b">
               <tr>
-                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Customer Name</th>
-                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Info</th>
-                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tier</th>
-                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Spent</th>
-                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Points</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Nama Pelanggan</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kontak</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tingkat (Tier)</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Belanja</th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Poin</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
@@ -90,7 +89,7 @@ const CustomerManager: React.FC<CustomerManagerProps> = ({ customers, feedbacks 
                     </span>
                   </td>
                   <td className="px-8 py-6 font-bold text-slate-700">Rp {c.totalSpent.toLocaleString('id-ID')}</td>
-                  <td className="px-8 py-6 text-right font-black text-[#3f51b5]">{c.points.toLocaleString()} pts</td>
+                  <td className="px-8 py-6 text-right font-black text-[#3f51b5]">{c.points.toLocaleString('id-ID')} poin</td>
                 </tr>
               ))}
             </tbody>
@@ -101,14 +100,14 @@ const CustomerManager: React.FC<CustomerManagerProps> = ({ customers, feedbacks 
       {activeTab === 'loyalty' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { tier: 'SILVER', perks: ['5% Birthday Discount', 'Basic Rewards'], min: '0', color: 'bg-slate-100 text-slate-600' },
-            { tier: 'GOLD', perks: ['10% Birthday Discount', 'Free Coffee Weekly', 'Priority Seating'], min: '500.000', color: 'bg-amber-100 text-amber-700' },
-            { tier: 'PLATINUM', perks: ['15% Birthday Discount', 'Monthly Free Meal', 'Concierge Service', 'Private Events'], min: '2.000.000', color: 'bg-indigo-100 text-[#3f51b5]' }
+            { tier: 'SILVER', perks: ['Diskon Ulang Tahun 5%', 'Poin Reward Dasar'], min: '0', color: 'bg-slate-100 text-slate-600' },
+            { tier: 'GOLD', perks: ['Diskon Ulang Tahun 10%', 'Kopi Gratis Mingguan', 'Prioritas Tempat Duduk'], min: '500.000', color: 'bg-amber-100 text-amber-700' },
+            { tier: 'PLATINUM', perks: ['Diskon Ulang Tahun 15%', 'Makan Gratis Bulanan', 'Layanan Prioritas', 'Acara Privat'], min: '2.000.000', color: 'bg-indigo-100 text-[#3f51b5]' }
           ].map(tier => (
             <div key={tier.tier} className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col items-center text-center">
               <div className={`w-16 h-16 rounded-3xl flex items-center justify-center text-2xl mb-6 ${tier.color}`}>🏆</div>
               <h3 className="text-2xl font-black mb-2">{tier.tier}</h3>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-8">Spend Rp {tier.min}+</p>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-8">Belanja Rp {tier.min}+</p>
               <div className="space-y-4 w-full">
                 {tier.perks.map(perk => (
                   <div key={perk} className="text-sm font-bold text-slate-600 flex items-center gap-3">
@@ -130,11 +129,11 @@ const CustomerManager: React.FC<CustomerManagerProps> = ({ customers, feedbacks 
                 <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-2xl shrink-0">💬</div>
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-black text-slate-800 uppercase tracking-tight">{customer?.name || 'Anonymous'}</h4>
+                    <h4 className="font-black text-slate-800 uppercase tracking-tight">{customer?.name || 'Pelanggan Anonim'}</h4>
                     <span className="text-emerald-500 font-black text-lg">{'★'.repeat(f.rating)}{'☆'.repeat(5-f.rating)}</span>
                   </div>
                   <p className="text-slate-500 font-medium italic">"{f.comment}"</p>
-                  <div className="mt-4 pt-4 border-t border-slate-50 text-[10px] font-black text-slate-300 uppercase tracking-widest">Received on {f.date}</div>
+                  <div className="mt-4 pt-4 border-t border-slate-50 text-[10px] font-black text-slate-300 uppercase tracking-widest">Diterima pada {f.date}</div>
                 </div>
               </div>
             );

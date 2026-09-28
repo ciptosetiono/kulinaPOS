@@ -38,12 +38,21 @@ const KitchenDisplay: React.FC<KitchenDisplayProps> = ({ orders, menuItems, onUp
             {order.items.map((item, idx) => {
               const menu = menuItems.find(m => m.id === item.menuItemId);
               return (
-                <div key={idx} className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
+                <div key={idx} className="p-3 bg-slate-50 rounded-xl space-y-1">
+                  <div className="flex justify-between items-start gap-4">
                     <p className="font-bold text-slate-800 leading-tight">{menu?.name}</p>
-                    {item.notes && <p className="text-[10px] text-amber-600 font-bold mt-1">✎ {item.notes}</p>}
+                    <span className="w-8 h-8 bg-white rounded-lg flex items-center justify-center font-black text-xs text-slate-700 shadow-sm border border-slate-100">x{item.quantity}</span>
                   </div>
-                  <span className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center font-black text-xs text-slate-600">x{item.quantity}</span>
+                  {item.selectedOptions && item.selectedOptions.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {item.selectedOptions.map((opt, oIdx) => (
+                        <span key={oIdx} className="text-[9px] font-black text-fuchsia-700 bg-fuchsia-100 px-2 py-0.5 rounded border border-fuchsia-200">
+                          📌 {opt.optionName}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {item.notes && <p className="text-[10px] text-amber-700 font-black mt-1 italic bg-amber-50 p-1 rounded border border-amber-200">✎ {item.notes}</p>}
                 </div>
               );
             })}

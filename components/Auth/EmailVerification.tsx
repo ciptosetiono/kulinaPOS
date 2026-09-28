@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import AuthLayout from './AuthLayout';
-import { createClient } from '@/utils/supabase/client';
 
 interface EmailVerificationProps {
   email?: string;
@@ -12,8 +11,6 @@ interface EmailVerificationProps {
 const EmailVerification: React.FC<EmailVerificationProps> = ({ email = '', onNavigate }) => {
   const [resendLoading, setResendLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  const supabase = createClient();
 
   const handleResend = async () => {
     if (!email) {
@@ -25,20 +22,10 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ email = '', onNav
     setMessage(null);
 
     try {
-      const emailRedirectTo = `${window.location.origin}/auth/callback?next=/dashboard`;
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email,
-        options: {
-          emailRedirectTo,
-        }
-      });
-
-      if (error) {
-        setMessage({ type: 'error', text: error.message });
-      } else {
-        setMessage({ type: 'success', text: `Confirmation email re-sent to ${email}!` });
-      }
+      // Mocking the resend process since Supabase is removed
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setMessage({ type: 'success', text: `Confirmation email re-sent to ${email}!` });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Failed to resend confirmation email.' });
     } finally {
@@ -48,8 +35,8 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ email = '', onNav
 
   return (
     <AuthLayout 
-      title="Check Your Email" 
-      subtitle={email ? `We sent a confirmation link to ${email}` : "We've sent a confirmation link to your inbox"}
+      title="Cek Email Anda" 
+      subtitle={email ? `Kami telah mengirim tautan konfirmasi ke ${email}` : "Kami telah mengirim tautan konfirmasi ke kotak masuk Anda"}
     >
       <div className="text-center space-y-6">
         {message && (
@@ -69,7 +56,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ email = '', onNav
             📬
           </div>
           <p className="text-sm text-slate-300 font-medium">
-            Click the link in your email to verify your account and access KulinaPOS.
+            Klik tautan di email Anda untuk memverifikasi akun dan mengakses KulinaPOS.
           </p>
         </div>
 
@@ -79,18 +66,18 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({ email = '', onNav
             onClick={() => onNavigate('login')}
             className="w-full py-5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all active:scale-95"
           >
-            Go to Sign In
+            Lanjut ke Masuk
           </button>
           
           <p className="text-sm text-slate-400 font-medium">
-            Didn't receive the email? {' '}
+            Tidak menerima email? {' '}
             <button 
               type="button"
               onClick={handleResend}
               disabled={resendLoading}
               className="text-emerald-500 font-bold hover:underline disabled:opacity-50"
             >
-              {resendLoading ? 'Sending...' : 'Resend Email'}
+              {resendLoading ? 'Mengirim...' : 'Kirim Ulang Email'}
             </button>
           </p>
         </div>

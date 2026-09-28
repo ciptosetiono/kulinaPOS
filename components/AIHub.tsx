@@ -1,9 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { getBusinessInsights, suggestNewMenuDescription } from '../services/geminiService';
-import { INITIAL_INVENTORY } from '../constants';
+import { InventoryItem } from '../types';
 
-const AIHub: React.FC = () => {
+interface AIHubProps {
+  inventory?: InventoryItem[];
+}
+
+const AIHub: React.FC<AIHubProps> = ({ inventory = [] }) => {
   const [insights, setInsights] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [suggestName, setSuggestName] = useState('');
@@ -12,13 +15,12 @@ const AIHub: React.FC = () => {
 
   useEffect(() => {
     const fetchInsights = async () => {
-      // Pass empty array for sales to trigger default fallback or actual mock from service
-      const result = await getBusinessInsights([], INITIAL_INVENTORY);
+      const result = await getBusinessInsights([], inventory);
       setInsights(result);
       setLoading(false);
     };
     fetchInsights();
-  }, []);
+  }, [inventory]);
 
   const handleSuggest = async () => {
     if (!suggestName) return;
@@ -37,7 +39,7 @@ const AIHub: React.FC = () => {
           </div>
           <div>
             <h2 className="text-2xl font-black uppercase tracking-tight">KulinaAI Business Hub</h2>
-            <p className="text-fuchsia-100 text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Neural Network Analysis</p>
+            <p className="text-fuchsia-100 text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Analisis Kecerdasan Buatan</p>
           </div>
         </div>
 
@@ -65,19 +67,19 @@ const AIHub: React.FC = () => {
             🖊️
           </div>
           <div>
-            <h2 className="text-2xl font-black uppercase tracking-tight">Menu Engine</h2>
-            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Generative Description Agent</p>
+            <h2 className="text-2xl font-black uppercase tracking-tight">Generator Deskripsi Menu</h2>
+            <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">Asisten Penulis Deskripsi Otomatis</p>
           </div>
         </div>
 
         <div className="flex-1 space-y-6">
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Product Designation</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Produk / Makanan</label>
             <input 
               value={suggestName}
               onChange={(e) => setSuggestName(e.target.value)}
-              placeholder="e.g. Signature Truffle Burger"
-              className="w-full px-6 py-5 bg-slate-50 rounded-2xl border-none focus:ring-4 focus:ring-fuchsia-100 transition-all outline-none font-bold"
+              placeholder="Contoh: Nasi Goreng Spesial Kulina"
+              className="w-full px-6 py-5 bg-slate-50 rounded-2xl border-none focus:ring-4 focus:ring-fuchsia-100 transition-all outline-none font-bold text-slate-900"
             />
           </div>
 
@@ -89,18 +91,18 @@ const AIHub: React.FC = () => {
             {suggestLoading ? (
               <span className="animate-spin text-xl">⚙️</span>
             ) : (
-              <><span>Optimize Copy</span><span>✨</span></>
+              <><span>Buat Deskripsi Otomatis</span><span>✨</span></>
             )}
           </button>
 
           {suggestResult && (
             <div className="mt-8 p-8 bg-fuchsia-50/50 rounded-[2.5rem] border border-fuchsia-100 relative animate-in fade-in zoom-in duration-300">
-              <h4 className="text-[9px] uppercase font-black text-fuchsia-600 mb-4 tracking-[0.2em]">KulinaAI OUTPUT:</h4>
+              <h4 className="text-[9px] uppercase font-black text-fuchsia-600 mb-4 tracking-[0.2em]">HASIL KULINAAI:</h4>
               <p className="text-lg italic font-medium text-slate-800 leading-relaxed text-center">"{suggestResult}"</p>
               <button 
                 onClick={() => {
                    navigator.clipboard.writeText(suggestResult);
-                   alert('Copied to clipboard!');
+                   alert('Tersalin ke papan klip!');
                 }}
                 className="absolute top-6 right-6 text-fuchsia-600 hover:scale-110 transition-transform bg-white w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
               >

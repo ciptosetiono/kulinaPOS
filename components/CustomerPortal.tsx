@@ -1,12 +1,12 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { MenuItem, Order, OrderStatus, OrderItem, PaymentMethod, Table, Outlet } from '../types';
-import { MOCK_OUTLETS } from '../constants';
 
 interface CustomerPortalProps {
   menuItems: MenuItem[];
   categories: string[];
   tables: Table[];
+  outlets?: Outlet[];
   onOrderSubmit: (order: Order) => void;
   restaurantName: string;
   onBackToStaff: () => void;
@@ -16,6 +16,7 @@ const CustomerPortal: React.FC<CustomerPortalProps> = ({
   menuItems, 
   categories, 
   tables, 
+  outlets = [],
   onOrderSubmit, 
   restaurantName,
   onBackToStaff
@@ -49,12 +50,12 @@ const CustomerPortal: React.FC<CustomerPortalProps> = ({
       setLocationStatus('error');
       return;
     }
-    const currentOutlet = MOCK_OUTLETS.find(o => o.name === restaurantName) || MOCK_OUTLETS[0];
+    const currentOutlet = outlets.find(o => o.name === restaurantName) || outlets[0];
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const userLat = position.coords.latitude;
         const userLon = position.coords.longitude;
-        if (!currentOutlet.latitude || !currentOutlet.longitude) {
+        if (!currentOutlet || !currentOutlet.latitude || !currentOutlet.longitude) {
           setLocationStatus('allowed');
           return;
         }
@@ -66,7 +67,7 @@ const CustomerPortal: React.FC<CustomerPortalProps> = ({
       () => setLocationStatus('error'),
       { enableHighAccuracy: true, timeout: 5000 }
     );
-  }, [restaurantName]);
+  }, [restaurantName, outlets]);
 
   const formatPrice = (price: number) => `Rp ${price.toLocaleString('id-ID')}`;
 

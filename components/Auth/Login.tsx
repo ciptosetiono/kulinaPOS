@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import AuthLayout from './AuthLayout';
-import { createClient } from '@/utils/supabase/client';
 
 interface LoginProps {
   onLogin: (email: string) => void;
@@ -15,21 +14,22 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const supabase = createClient();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
+      
+      const data = await response.json();
 
-      if (error) {
-        setErrorMsg(error.message);
+      if (!response.ok) {
+        setErrorMsg(data.error || 'Failed to authenticate');
       } else {
         onLogin(email);
       }
@@ -42,8 +42,8 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
 
   return (
     <AuthLayout 
-      title="Secure Login" 
-      subtitle="Access your KulinaPOS Terminal"
+      title="Masuk Aman" 
+      subtitle="Akses Terminal KulinaPOS Anda"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {errorMsg && (
@@ -53,26 +53,26 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
         )}
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Enterprise Email</label>
+          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Perusahaan</label>
           <input 
             type="email" 
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-fuchsia-600 transition-all placeholder:text-slate-700"
-            placeholder="ceo@maqpos.com"
+            placeholder="nama@perusahaan.com"
           />
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Passkey</label>
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kata Sandi</label>
             <button 
               type="button"
               onClick={() => onNavigate('forgot')}
               className="text-[10px] font-black text-fuchsia-600 uppercase tracking-widest hover:text-fuchsia-500"
             >
-              Reset?
+              Lupa Sandi?
             </button>
           </div>
           <input 
@@ -93,19 +93,19 @@ const Login: React.FC<LoginProps> = ({ onLogin, onNavigate }) => {
           {loading ? (
             <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
           ) : (
-            'AUTHENTICATE'
+            'MASUK'
           )}
         </button>
 
         <div className="pt-4 text-center">
           <p className="text-sm text-slate-400 font-medium">
-            New Organization? {' '}
+            Belum punya akun? {' '}
             <button 
               type="button"
               onClick={() => onNavigate('register')}
               className="text-fuchsia-600 font-black hover:underline uppercase tracking-tighter"
             >
-              Initialize Node
+              Daftar Sekarang
             </button>
           </p>
         </div>

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import AuthLayout from './AuthLayout';
-import { createClient } from '@/utils/supabase/client';
 
 interface ForgotPasswordProps {
   onNavigate: (page: string) => void;
@@ -13,27 +12,19 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onNavigate }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const supabase = createClient();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
 
     try {
-      const redirectTo = `${window.location.origin}/auth/callback?next=/update-password`;
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo,
+      // Mocking the password reset process since Supabase is removed
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setMessage({
+        type: 'success',
+        text: `If the email exists, a password reset link has been sent to ${email}.`,
       });
-
-      if (error) {
-        setMessage({ type: 'error', text: error.message });
-      } else {
-        setMessage({
-          type: 'success',
-          text: `Password reset link has been sent to ${email}. Please check your inbox!`,
-        });
-      }
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'An unexpected error occurred.' });
     } finally {
@@ -43,8 +34,8 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onNavigate }) => {
 
   return (
     <AuthLayout
-      title="Reset Password"
-      subtitle="Enter your email to receive a password reset link"
+      title="Riset Kata Sandi"
+      subtitle="Masukkan email Anda untuk menerima tautan riset kata sandi"
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {message && (
@@ -61,7 +52,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onNavigate }) => {
 
         <div className="space-y-2">
           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-            Enterprise Email
+            Email Perusahaan
           </label>
           <input
             type="email"
@@ -69,7 +60,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onNavigate }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-6 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:ring-2 focus:ring-fuchsia-600 transition-all placeholder:text-slate-700"
-            placeholder="ceo@maqpos.com"
+            placeholder="nama@perusahaan.com"
           />
         </div>
 
@@ -81,19 +72,19 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onNavigate }) => {
           {loading ? (
             <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
           ) : (
-            'SEND RESET LINK'
+            'KIRIM TAUTAN RESET'
           )}
         </button>
 
         <div className="pt-4 text-center">
           <p className="text-sm text-slate-400 font-medium">
-            Remembered your password?{' '}
+            Ingat kata sandi Anda?{' '}
             <button
               type="button"
               onClick={() => onNavigate('login')}
               className="text-fuchsia-600 font-black hover:underline uppercase tracking-tighter"
             >
-              Back to Login
+              Kembali ke Login
             </button>
           </p>
         </div>

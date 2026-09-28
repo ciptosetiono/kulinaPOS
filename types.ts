@@ -20,18 +20,29 @@ export enum PaymentMethod {
 }
 
 export enum Category {
-  MAIN_COURSE = 'Main Course',
-  BEVERAGE = 'Beverage',
-  APPETIZER = 'Appetizer',
+  MAIN_COURSE = 'Makanan Utama',
+  BEVERAGE = 'Minuman',
+  APPETIZER = 'Camilan',
   DESSERT = 'Dessert',
-  SIDES = 'Sides'
+  SIDES = 'Tambahan'
 }
 
 export enum UserRole {
   OWNER = 'OWNER',
-  ADMIN = 'ADMIN',
   MANAGER = 'MANAGER',
-  CASHIER = 'CASHIER'
+  CASHIER = 'CASHIER',
+  KITCHEN = 'KITCHEN'
+}
+
+export interface UserAccount {
+  id: string;
+  tenantId: string;
+  email: string;
+  name: string;
+  role: UserRole | string;
+  outletId?: string;
+  isActive: boolean;
+  createdAt?: string;
 }
 
 export interface Tenant {
@@ -66,7 +77,7 @@ export interface UserSession {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
+  role: UserRole | string;
   tenantId: string;
   allowedOutlets: string[]; 
 }
@@ -80,6 +91,23 @@ export interface Discount {
   isActive: boolean;
 }
 
+export interface ProductOption {
+  name: string;
+  price: number;
+}
+
+export interface ProductOptionGroup {
+  groupName: string;
+  type: 'SINGLE' | 'MULTIPLE';
+  options: ProductOption[];
+}
+
+export interface SelectedOption {
+  groupName: string;
+  optionName: string;
+  price: number;
+}
+
 export interface MenuItem {
   id: string;
   tenantId: string; 
@@ -91,6 +119,7 @@ export interface MenuItem {
   inStock: boolean;
   calories?: number;
   isFavorite?: boolean;
+  optionGroups?: ProductOptionGroup[];
 }
 
 export interface OrderItem {
@@ -98,6 +127,7 @@ export interface OrderItem {
   quantity: number;
   notes?: string;
   priceAtOrder: number;
+  selectedOptions?: SelectedOption[];
 }
 
 export interface Order {
